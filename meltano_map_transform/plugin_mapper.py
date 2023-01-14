@@ -26,17 +26,9 @@ MAPPER_ALIAS_OPTION = "__alias__"
 MAPPER_KEY_PROPERTIES_OPTION = "__key_properties__"
 NULL_STRING = "__NULL__"
 
-def md5(input: str) -> str:
-    """Digest a string using MD5. This is a function for inline calculations.
-    Args:
-        input: String to digest.
-    Returns:
-        A string digested into MD5.
-    """
-    return hashlib.md5(input.encode("utf-8")).hexdigest()
 
 
-class ExtrensibleMapper(PluginMapper):
+class ExtensibleMapper(PluginMapper):
     """Inline map tranformer."""
 
     def __init__(
