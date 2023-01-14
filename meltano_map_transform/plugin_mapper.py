@@ -17,6 +17,8 @@ from singer_sdk.mapper import (
     StreamMapsDict
 )
 
+from singer_sdk.helpers._flattening import FlatteningOptions
+
 MAPPER_ELSE_OPTION = "__else__"
 MAPPER_FILTER_OPTION = "__filter__"
 MAPPER_SOURCE_OPTION = "__source__"
@@ -45,12 +47,29 @@ class EnvStreamMap(CustomStreamMap):
 
     def __init__(
         self,
-        stream_name: str,
-        catalog: Catalog,
-        **kwargs: Any,
-    ):
-        super().__init__(stream_name, catalog, **kwargs)
-    
+        stream_alias: str,
+        map_config: dict,
+        raw_schema: dict,
+        key_properties: list[str] | None,
+        map_transform: dict,
+        flattening_options: FlatteningOptions | None,
+    ) -> None:
+        """Initialize mapper.
+        Args:
+            stream_alias: Stream name.
+            map_config: Stream map configuration.
+            raw_schema: Original stream's JSON schema.
+            key_properties: Primary key of the source stream.
+            map_transform: Dictionary of transformations to apply to the stream.
+            flattening_options: Flattening options, or None to skip flattening.
+        """
+        super().__init__(
+            stream_alias=stream_alias,
+            raw_schema=raw_schema,
+            key_properties=key_properties,
+            flattening_options=flattening_options,
+        )
+
     @property
     def functions(self) -> dict[str, Callable]:
         """Get availabale transformation functions.
