@@ -14,7 +14,8 @@ from singer_sdk.mapper import (
     CustomStreamMap,
     PluginMapper,
     RemoveRecordTransform,
-    StreamMapsDict
+    StreamMapsDict,
+    CustomStreamMap
 )
 
 
@@ -35,7 +36,7 @@ class ExtensibleMapper(PluginMapper):
         self,
         plugin_config: dict[str, StreamMapsDict],
         logger: logging.Logger,
-        mapper_class: type[Any] = Any,
+        mapper_class: type[Any] = CustomStreamMap,
     ) -> None:
         """Initialize mapper.
         Args:
