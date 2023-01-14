@@ -7,7 +7,7 @@ import singer_sdk.typing as th
 from singer_sdk import _singerlib as singer
 from singer_sdk.helpers._util import utc_now
 from singer_sdk.mapper_base import InlineMapper
-from plugin_mapper import EnvMapper
+from .plugin_mapper import EnvMapper
 
 class StreamTransform(InlineMapper):
     """A map transformer which implements the Stream Maps capability."""
