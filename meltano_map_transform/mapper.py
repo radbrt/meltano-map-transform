@@ -7,7 +7,9 @@ import singer_sdk.typing as th
 from singer_sdk import _singerlib as singer
 from singer_sdk.helpers._util import utc_now
 from singer_sdk.mapper_base import InlineMapper
-from .plugin_mapper import EnvMapper
+from .plugin_mapper import ExtensibleMapper
+from .mapper_logic import ExtensibleStreamMap
+
 
 class StreamTransform(InlineMapper):
     """A map transformer which implements the Stream Maps capability."""
@@ -62,7 +64,10 @@ class StreamTransform(InlineMapper):
             validate_config=validate_config,
         )
 
-        self.mapper = EnvMapper(plugin_config=dict(self.config), logger=self.logger)
+        self.mapper = ExtensibleMapper(
+            plugin_config=dict(self.config), 
+            logger=self.logger,
+            mapper_class=ExtensibleStreamMap)
 
     def map_schema_message(
         self,

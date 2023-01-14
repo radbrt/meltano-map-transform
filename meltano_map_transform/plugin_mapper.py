@@ -17,7 +17,7 @@ from singer_sdk.mapper import (
     StreamMapsDict
 )
 
-from singer_sdk.helpers._flattening import FlatteningOptions
+
 
 MAPPER_ELSE_OPTION = "__else__"
 MAPPER_FILTER_OPTION = "__filter__"
@@ -36,63 +36,14 @@ def md5(input: str) -> str:
     return hashlib.md5(input.encode("utf-8")).hexdigest()
 
 
-class EnvStreamMap(CustomStreamMap):
-    """A stream map that uses a custom environment to evaluate map expressions.
-
-    This is a subclass of :class:`singer_sdk.mapper.CustomStreamMap` that uses a 
-    custom environment to evaluate map expressions. 
-    
-    This custom environment is provided by the ``env`` argument to the constructor.
-    """
-
-    def __init__(
-        self,
-        stream_alias: str,
-        map_config: dict,
-        raw_schema: dict,
-        key_properties: list[str] | None,
-        map_transform: dict,
-        flattening_options: FlatteningOptions | None,
-    ) -> None:
-        """Initialize mapper.
-        Args:
-            stream_alias: Stream name.
-            map_config: Stream map configuration.
-            raw_schema: Original stream's JSON schema.
-            key_properties: Primary key of the source stream.
-            map_transform: Dictionary of transformations to apply to the stream.
-            flattening_options: Flattening options, or None to skip flattening.
-        """
-        super().__init__(
-            stream_alias=stream_alias,
-            map_config=map_config,
-            raw_schema=raw_schema,
-            key_properties=key_properties,
-            map_transform=map_transform,
-            flattening_options=flattening_options,
-        )
-
-    @property
-    def functions(self) -> dict[str, Callable]:
-        """Get availabale transformation functions.
-        Returns:
-            Functions which should be available for expression evaluation.
-        """
-        funcs: dict[str, Any] = simpleeval.DEFAULT_FUNCTIONS.copy()
-        funcs["md5"] = md5
-        funcs["datetime"] = datetime
-        funcs["os"] = os
-        return funcs
-
-
-
-class EnvMapper(PluginMapper):
+class ExtrensibleMapper(PluginMapper):
     """Inline map tranformer."""
 
     def __init__(
         self,
         plugin_config: dict[str, StreamMapsDict],
         logger: logging.Logger,
+        mapper_class: type[Any] = Any,
     ) -> None:
         """Initialize mapper.
         Args:
@@ -102,6 +53,8 @@ class EnvMapper(PluginMapper):
             StreamMapConfigError: TODO
         """
         super().__init__(plugin_config, logger)
+
+        self.mapper_class = mapper_class
 
 
     def register_raw_stream_schema(
@@ -179,7 +132,7 @@ class EnvMapper(PluginMapper):
             if MAPPER_ALIAS_OPTION in stream_def:
                 stream_alias = stream_def.pop(MAPPER_ALIAS_OPTION)
 
-            mapper = EnvStreamMap(
+            mapper = self.mapper_class(
                 stream_alias=stream_alias,
                 map_transform=stream_def,
                 map_config=self.map_config,
