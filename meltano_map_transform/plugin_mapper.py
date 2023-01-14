@@ -65,8 +65,10 @@ class EnvStreamMap(CustomStreamMap):
         """
         super().__init__(
             stream_alias=stream_alias,
+            map_config=map_config,
             raw_schema=raw_schema,
             key_properties=key_properties,
+            map_transform=map_transform,
             flattening_options=flattening_options,
         )
 
