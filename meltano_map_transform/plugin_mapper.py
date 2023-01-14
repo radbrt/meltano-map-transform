@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-import abc
-import copy
 import datetime
 import hashlib
 import logging
-import sys
-from typing import Any, Callable, Dict, Union
+from typing import Any, Callable
 import os
 
 from singer_sdk.helpers import _simpleeval as simpleeval
